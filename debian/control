@@ -1,0 +1,13 @@
+Source: nvrun
+Priority: optional
+Section: utils
+Maintainer: Nolan Pro <email@email.com>
+Build-Depends: debhelper-compat (= 13)
+Homepage: https://github.com/ner216/nvrun
+Standards-Version: 4.7.0
+
+Package: nvrun
+Architecture: all
+Depends: ${misc:Depends}, python3
+Description: Run Nvidia GPU only when required in hybrid setups.
+    Configures Nvidia GPU to stay in sleep(d3cold) unless explicitly required.

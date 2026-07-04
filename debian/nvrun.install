@@ -1,0 +1,2 @@
+nvrun /usr/bin/
+nv-block.conf /etc/environment.d/

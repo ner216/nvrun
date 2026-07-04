@@ -1,0 +1,60 @@
+#!/usr/bin/env python3
+import argparse
+import os
+import sys
+
+POWER_STATE_PATH = '/sys/bus/pci/devices/0000:01:00.0/power_state'
+VERSION = "1.0.0"
+
+def get_gpu_power_state():
+    """Safely reads the current hardware power state of the dGPU."""
+    try:
+        with open(POWER_STATE_PATH, 'r') as f:
+            return f.read().strip()
+    except FileNotFoundError:
+        return "Unknown (Device file not found)"
+    except Exception as e:
+        return f"Unknown (Error: {e})"
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="NVIDIA Prime Offload Launcher & Power Status Utility. Without arguments, nvrun will display this help menu. Provide an executable command to run it using the discrete NVIDIA GPU."
+    )
+    
+    parser.add_argument("-s", "--status", action="store_true", help="Print the current hardware power state of the NVIDIA GPU (e.g., D3cold, D0).")
+    parser.add_argument("-v", "--version", action="store_true", help="Print version info and exit.")
+    
+    # parse_known_args returns a tuple: (parsed_namespace, list_of_remaining_unparsed_args)
+    args, command_args = parser.parse_known_args()
+    
+    # Interpret options matching your structural flow
+    if args.status and len(sys.argv) == 2:
+        state = get_gpu_power_state()
+        print(f"NVIDIA GPU Power State: {state}")
+        
+    elif args.version and len(sys.argv) == 2:
+        print(f"nvrun version {VERSION}")
+        
+    elif command_args:
+        # Lift the system-wide environment blindfold for this process tree
+        os.environ.pop('VK_LOADER_DRIVERS_DISABLE', None)
+        os.environ.pop('__EGL_VENDOR_LIBRARY_FILENAMES', None)
+
+        # Inject standard NVIDIA Prime offload variables
+        os.environ['__NV_PRIME_RENDER_OFFLOAD'] = '1'
+        os.environ['__VK_LAYER_NV_optimus'] = 'NVIDIA_only'
+        os.environ['__GLX_VENDOR_LIBRARY_NAME'] = 'nvidia'
+
+        # Execute the application
+        try:
+            os.execvp(command_args[0], command_args)
+        except FileNotFoundError:
+            print(f"Error: Command '{command_args[0]}' not found in PATH.")
+            sys.exit(127)
+            
+    else:
+        parser.print_help()
+        sys.exit(1)
+
+if __name__ == '__main__':
+    main()
