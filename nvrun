@@ -58,6 +58,20 @@ def print_gpu_power_state():
 
     print(f"State: {GREEN}{gpu_power_state}{RESET} ({hint})")
 
+def print_env_vars():
+    vulkan = os.environ.get('VK_LOADER_DRIVERS_DISABLE')
+    opengl = os.environ.get('__EGL_VENDOR_LIBRARY_FILENAMES')
+
+    if opengl is None:
+        print("OpenGL (__EGL_VENDOR_LIBRARY_FILENAMES): null")
+    else:
+        print(f"OpenGL (__EGL_VENDOR_LIBRARY_FILENAMES): {opengl}")
+
+    if vulkan is None:
+        print("Vulkan (VK_LOADER_DRIVERS_DISABLE): null")
+    else:
+        print(f"Vulkan (VK_LOADER_DRIVERS_DISABLE): {vulkan}")
+
 def main():
     parser = argparse.ArgumentParser(
         description="NVIDIA Prime Offload Launcher & Power Status Utility. Without arguments, nvrun will display this help menu. Provide an executable command to run it using the discrete NVIDIA GPU."
@@ -65,6 +79,7 @@ def main():
     
     parser.add_argument("-s", "--status", action="store_true", help="Print the current hardware power state of the NVIDIA GPU (e.g., D3cold, D0).")
     parser.add_argument("-v", "--version", action="store_true", help="Print version info and exit.")
+    parser.add_argument("-e", "--env", action="store_true", help="Print environment variables.")
     
     # parse_known_args returns a tuple: (parsed_namespace, list_of_remaining_unparsed_args)
     args, command_args = parser.parse_known_args()
@@ -75,6 +90,9 @@ def main():
         
     elif args.version and len(sys.argv) == 2:
         print(f"nvrun version {VERSION}")
+
+    elif args.env and len(sys.argv) == 2:
+        print_env_vars()
         
     elif command_args:
         # Lift the system-wide environment blindfold for this process tree
