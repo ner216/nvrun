@@ -1,0 +1,7 @@
+# Build files
+.debhelper/
+nvrun/
+debhelper-build-stamp
+files
+nvrun.substvars
+
