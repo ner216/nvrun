@@ -25,6 +25,8 @@ Launch any application or game on the NVIDIA GPU from your terminal by prefixing
 nvrun <program> [arguments...]
 ```
 
+Alternatively, use the "Run with discrete graphics" right click menu option provided by switcheroo-control.
+
 ---
 
 ### Install
