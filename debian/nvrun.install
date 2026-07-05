@@ -1,2 +1,3 @@
 nvrun /usr/bin/
 nv-block.conf /etc/environment.d/
+docs/nvrun.1 /usr/share/man/man1/
