@@ -16,6 +16,14 @@ Because the NVIDIA driver cannot answer these queries while asleep, it forces th
 2. **Explicit Launcher:** The `nvrun` CLI tool temporarily lifts this blindfold and injects standard NVIDIA Prime offload variables to run specific applications on the dGPU.
 
 ---
+### Requirements:
+
+- Currently only supports setups with an Intel CPU and Nvidia GPU
+- Must have the proprietary Nvidia driver installed
+- The Ubuntu graphics mode must be set to "on-demand". You can check this with the following command:
+```bash
+prime-select query
+```
 
 ## Usage
 
