@@ -12,38 +12,29 @@ On modern Linux desktops (like GNOME on Wayland), graphics libraries scan all av
 Because the NVIDIA driver cannot answer these queries while asleep, it forces the dGPU out of its D3cold deep sleep state and into D0 (full power). This causes a 1–3 second launch lag and can double your laptop's idle power draw during normal desktop usage.
 
 ## Fix
-1. **System-Wide Blindfold:** Deploys a configuration file to systemd (`/etc/systemd/user-environment-generators/`) that forces Vulkan and EGL loaders to ignore the NVIDIA driver registry by default. The desktop runs purely on integrated graphics, leaving the dGPU in a 0-watt sleep state. Nvidia only mode (BIOS MUX switch) will still work as the configuration file will do nothing if the Intel GPU is not detected.
+1. **User Session Blindfold:** Enables a user-level configuration (`~/.config/environment.d/hide-nvidia.conf`) that forces Vulkan and EGL loaders to ignore the NVIDIA driver registry by default. The desktop runs purely on integrated graphics, leaving the dGPU in a 0-watt sleep state.
 2. **Explicit Launcher:** The `nvrun` CLI tool temporarily lifts this blindfold and injects standard NVIDIA Prime offload variables to run specific applications on the dGPU.
 
 ---
+
 ### Requirements:
 
-- Currently only supports setups with an Intel CPU and Nvidia GPU
 - Must have the proprietary Nvidia driver installed
 - The Ubuntu graphics mode must be set to "on-demand". You can check this with the following command:
 ```bash
 prime-select query
+
+on-demand
 ```
 
-## Usage
+### Usage:
 
-Launch any application or game on the NVIDIA GPU from your terminal by prefixing the command with `nvrun`:
-
+- Enable power-saving mode (creates ~/.config/environment.d/hide-nvidia.conf)
 ```bash
-nvrun <program> [arguments...]
+nvrun --enable
 ```
 
-Alternatively, use the "Run with discrete graphics" right click menu option provided by switcheroo-control.
-
----
-
-### Install
-Install the latest package from the releases section.
-
----
-
-### Notes
-Applications that explicitly access the GPU by means other than scanning for hardware through OpenGL and Vulkan
-will still wake the GPU.
-
-This means that Switcheroo-control(right-click menu 'Launch using discrete graphics card') will still work. It also means that resource monitor apps like Gnome Resources or nvtop will still wake the GPU while running.
+- Disable power-saving mode (deletes ~/.config/environment.d/hide-nvidia.conf)
+```bash
+nvrun --disable
+```

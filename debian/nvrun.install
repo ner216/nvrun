@@ -1,3 +1,0 @@
-nvrun usr/bin/
-60-nv-block.sh etc/systemd/user-environment-generators/
-docs/nvrun.1 usr/share/man/man1/
